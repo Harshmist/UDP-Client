@@ -21,6 +21,7 @@ func main() {
 
 	fmt.Printf("The UDP server is %s\n", c.RemoteAddr().String())
 	defer c.Close()
+	go Reader(c)
 
 	for {
 		reader := bufio.NewReader(os.Stdin)
@@ -38,12 +39,18 @@ func main() {
 			return
 		}
 
-		buffer := make([]byte, 1024)
+	}
+}
+
+func Reader(c *net.UDPConn) {
+	buffer := make([]byte, 1024)
+	for {
 		n, _, err := c.ReadFromUDP(buffer)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 		fmt.Print(string(buffer[0:n]))
+		fmt.Print(">> ")
 	}
 }
